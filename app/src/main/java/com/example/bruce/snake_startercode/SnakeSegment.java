@@ -1,9 +1,12 @@
 package com.example.bruce.snake_startercode;
 
 public class SnakeSegment {
+
+
     public enum BodyParts{HEAD, BODY, TAIL};
     BodyParts mbodyParts;
     int mDegrees, mXLoc, mYLoc;
+
 
     public SnakeSegment( BodyParts bodyParts , int Degrees, int XLoc, int YLoc){
         mbodyParts = bodyParts;
@@ -36,7 +39,7 @@ public class SnakeSegment {
         mYLoc = YLoc;
     }
 
-    public BodyParts getMbodyParts() {
+    public BodyParts getBodyParts() {
         return mbodyParts;
     }
 

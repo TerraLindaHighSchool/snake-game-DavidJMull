@@ -37,6 +37,9 @@ public class SnakeGame {
   }
     
   protected boolean play(){
+    for (int seg = 0; seg > mSnake.size(); seg++){
+      mSnake.get(seg).setXLoc(mSnake.get(seg).getXLoc() +1 );
+    }
         return false;
   }
 
@@ -48,9 +51,6 @@ public class SnakeGame {
     return mSnake;
   }
 
-  protected int getXLoc() {
-    return mXLoc;
-  }
 
   protected int getSpriteDim() {
     return mSpriteDim;
@@ -60,9 +60,6 @@ public class SnakeGame {
     return mMillsDelay;
   }
 
-  protected int getYLoc() {
-    return mYLoc;
-  }
 
   protected int[] getAppleCoord() {
     return mAppleCoord;

@@ -38,7 +38,7 @@ public class SnakeGame {
     
   protected boolean play(){
     for (int seg = 0; seg > mSnake.size(); seg++){
-      mSnake.get(seg).setXLoc(mSnake.get(seg).getXLoc() +1 );
+      mSnake.get(seg).setXLoc(mSnake.get(seg).getXLoc()+1 );
     }
         return false;
   }

@@ -8,8 +8,10 @@ import java.util.Random;
 
 public class SnakeGame {
 
-  private int mScore,mSpriteDim,mBOARD_WIDTH, mBOARD_HEIGHT, mLevel,mCountdown,mMillisDelay, mDegrees,mXLoc,mYLoc, mMillsDelay, getMillisDelay, mXMax, mYMax ;
+  private long mMillisDelay;
+  private int mScore,mSpriteDim,mBOARD_WIDTH, mBOARD_HEIGHT, mLevel,mCountdown, mDegrees,mXLoc,mYLoc, mXMax, mYMax ;
   private List<SnakeSegment> mSnake;
+  private List<PivotPoint> mPivotPoints;
   private boolean mGameOver;
   private int[] mAppleCoord;
 
@@ -20,12 +22,13 @@ public class SnakeGame {
     mScore = 0;
     mLevel = 1;
     mCountdown = 12;
-    mMillisDelay = 400;
+    mMillisDelay = 700;
     mAppleCoord = new int[2];
     mSnake = new ArrayList<>();
     mSnake.add(new SnakeSegment(SnakeSegment.BodyParts.HEAD, beginningDirection,beginningX, beginningY));
     mSnake.add(new SnakeSegment(SnakeSegment.BodyParts.BODY, beginningDirection,beginningX - 1 ,beginningY));
     mSnake.add(new SnakeSegment(SnakeSegment.BodyParts.TAIL, beginningDirection,beginningX - 2, beginningY));
+    mPivotPoints = new ArrayList<>();
     mGameOver = false;
     mXMax = width/beginningSpriteDim;
     mYMax = height/beginningSpriteDim;
@@ -33,7 +36,26 @@ public class SnakeGame {
   }
   
   protected void touched(float xTouched, float yTouched){
-  
+    int snakeHeadX = mSnake.get(0).getXLoc()*mSpriteDim;
+    int snakeHeadY = mSnake.get(0).getYLoc()*mSpriteDim;
+    int snakeHeadDir = mSnake.get(0).getDegrees();
+
+    if (snakeHeadDir == 0 ||snakeHeadDir == 180){//left right
+      if (snakeHeadY < yTouched){ // up
+        mPivotPoints.add(new PivotPoint(snakeHeadX/mSpriteDim,snakeHeadY/mSpriteDim, 270));
+      }
+      if(snakeHeadY > yTouched){//down
+        mPivotPoints.add(new PivotPoint(snakeHeadX/mSpriteDim,snakeHeadY/mSpriteDim, 90));
+      }
+    }
+    if (snakeHeadDir == 90 ||snakeHeadDir == 270){ //up down
+      if(snakeHeadX < xTouched){
+        mPivotPoints.add(new PivotPoint(snakeHeadX/mSpriteDim,snakeHeadY/mSpriteDim, 0));
+      }
+      if(snakeHeadX > xTouched){
+        mPivotPoints.add(new PivotPoint(snakeHeadX/mSpriteDim,snakeHeadY/mSpriteDim, 180));
+      }
+    }
   }
     
   protected void eatApple(){
@@ -46,20 +68,36 @@ public class SnakeGame {
     
   protected boolean play(){
     for (int seg = 0; seg < mSnake.size(); seg++){
-      mSnake.get(seg).setXLoc(mSnake.get(seg).getXLoc()+1 );
+      for (int point = 0; point < mPivotPoints.size(); point++){
+        if(mPivotPoints.get(point).getXLoc()== mSnake.get(seg).getXLoc() && mPivotPoints.get(point).getYLoc()== mSnake.get(seg).getYLoc()){
+          mSnake.get(seg).setDegrees(mPivotPoints.get(point).mDegree);
+          if(mSnake.get(seg).getBodyParts()== SnakeSegment.BodyParts.TAIL){
+            mPivotPoints.remove(point);
+          }
+        }
+      }
+      switch (mSnake.get(seg).getDegrees()){
+        case 0:
+          mSnake.get(seg).setXLoc(mSnake.get(seg).getXLoc() + 1);
+          break;
+        case 90:
+          mSnake.get(seg).setYLoc(mSnake.get(seg).getYLoc() - 1);
+          break;
+        case 180:
+          mSnake.get(seg).setXLoc(mSnake.get(seg).getXLoc() - 1);
+          break;
+        case 270:
+          mSnake.get(seg).setYLoc(mSnake.get(seg).getYLoc() + 1);
+          break;
+      }
+
     }
-    if(mSnake.get(0).getXLoc() >= mXMax)
+   if(mSnake.get(0).getXLoc() >= mXMax)
       return true;
       return false;
   }
 
-  protected int getDegrees() {
-    return mDegrees;
-  }
 
-  protected List<SnakeSegment> getBodyParts() {
-    return mSnake;
-  }
 
 
   protected int getSpriteDim() {
@@ -67,9 +105,8 @@ public class SnakeGame {
   }
 
   protected long getMillisDelay() {
-    return mMillsDelay;
+    return mMillisDelay;
   }
-
 
   protected int[] getAppleCoord() {
     return mAppleCoord;

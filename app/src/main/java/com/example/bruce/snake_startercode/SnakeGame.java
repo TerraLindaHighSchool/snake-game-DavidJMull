@@ -9,7 +9,7 @@ import java.util.Random;
 public class SnakeGame {
 
   private long mMillisDelay;
-  private int mScore,mSpriteDim,mBOARD_WIDTH, mBOARD_HEIGHT, mLevel,mCountdown, mDegrees,mXLoc,mYLoc, mXMax, mYMax ;
+  private int mScore,mSpriteDim,mBOARD_WIDTH, mBOARD_HEIGHT, mLevel,mCountdown,  mXMax, mYMax ;
   private List<SnakeSegment> mSnake;
   private List<PivotPoint> mPivotPoints;
   private boolean mGameOver;
@@ -59,34 +59,33 @@ public class SnakeGame {
   }
     
   protected void eatApple(){
-        if(mAppleCoord[0]/getSpriteDim() == mSnake.get(0).getXLoc() && mAppleCoord[1]/getSpriteDim() == mSnake.get(0).getYLoc()){
+        if(mAppleCoord[0] == mSnake.get(0).getXLoc()*getSpriteDim() && mAppleCoord[1] == mSnake.get(0).getYLoc()*getSpriteDim()){
           growSnake();
           setAppleCord();
       }
   }
 
   private void growSnake(){
-    int newPosition = mSnake.size() - 1;
-    mSnake.add(new SnakeSegment(SnakeSegment.BodyParts.BODY, mSnake.get(newPosition).mDegrees,mSnake.get(newPosition).getXLoc(),mSnake.get(newPosition).mYLoc));
-    switch (mSnake.get(newPosition).getDegrees()){
+    mSnake.add(mSnake.size()- 2,new SnakeSegment(SnakeSegment.BodyParts.BODY, mSnake.get(mSnake.size()- 1).mDegrees,mSnake.get(mSnake.size()- 1).getXLoc(),mSnake.get(mSnake.size()- 1).mYLoc));
+    switch (mSnake.get(mSnake.size()- 1).getDegrees()){
       case 0:
-        mSnake.get(newPosition).setXLoc(mSnake.get(newPosition).getXLoc() - 1);
+        mSnake.get(mSnake.size()- 1).setXLoc(mSnake.get(mSnake.size()- 1).getXLoc() - 1);
         break;
       case 90:
-        mSnake.get(newPosition).setYLoc(mSnake.get(newPosition).getYLoc() - 1);
+        mSnake.get(mSnake.size()- 1).setYLoc(mSnake.get(mSnake.size()- 1).getYLoc() - 1);
         break;
       case 180:
-        mSnake.get(newPosition).setXLoc(mSnake.get(newPosition).getXLoc() + 1);
+        mSnake.get(mSnake.size()- 1).setXLoc(mSnake.get(mSnake.size()- 1).getXLoc() + 1);
         break;
       case 270:
-        mSnake.get(newPosition).setYLoc(mSnake.get(mSnake.size()).getYLoc() + 1);
+        mSnake.get(mSnake.size()- 1).setYLoc(mSnake.get(mSnake.size()- 1).getYLoc() + 1);
         break;
     }
   }
 
   private void setAppleCord(){
-    mAppleCoord[0]= (int)(Math.random() * (mBOARD_WIDTH-1) +1);
-    mAppleCoord[1]= (int)(Math.random() * (mBOARD_HEIGHT-1) +1);
+    mAppleCoord[0]= (int)(Math.random() * (mXMax-1) +1)*mSpriteDim;
+    mAppleCoord[1]= (int)(Math.random() * (mYMax-1) +1)*mSpriteDim;
   }
     
   protected boolean play() {
@@ -96,7 +95,7 @@ public class SnakeGame {
         if (mPivotPoints.get(point).getXLoc() == mSnake.get(seg).getXLoc() && mPivotPoints.get(point).getYLoc() == mSnake.get(seg).getYLoc()) {
           mSnake.get(seg).setDegrees(mPivotPoints.get(point).mDegree);
           if (mSnake.get(seg).getBodyParts() == SnakeSegment.BodyParts.TAIL) {
- //           mPivotPoints.remove(point);
+            mPivotPoints.remove(point);
           }
         }
       }
@@ -115,7 +114,7 @@ public class SnakeGame {
           break;
       }
     }
-      if (mSnake.get(0).getXLoc() >= mXMax ||mSnake.get(0).getYLoc() >= mYMax )
+      if (mSnake.get(0).getXLoc() >= mXMax || mSnake.get(0).getYLoc() >= mYMax || mSnake.get(0).getXLoc() <= 0 || mSnake.get(0).getYLoc() <= 0 )
         return true;
       return false;
     }

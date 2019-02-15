@@ -22,7 +22,7 @@ public class SnakeGame {
     mScore = 0;
     mLevel = 1;
     mCountdown = 12;
-    mMillisDelay = 400;
+    mMillisDelay = 200;
     mAppleCoord = new int[2];
     mSnake = new ArrayList<>();
     mSnake.add(new SnakeSegment(SnakeSegment.BodyParts.HEAD, beginningDirection,beginningX, beginningY));
@@ -61,6 +61,7 @@ public class SnakeGame {
   protected void eatApple(){
         if(mAppleCoord[0] == mSnake.get(0).getXLoc()*getSpriteDim() && mAppleCoord[1] == mSnake.get(0).getYLoc()*getSpriteDim()){
           growSnake();
+          updateScores();
           setAppleCord();
       }
   }
@@ -86,10 +87,13 @@ public class SnakeGame {
   private void setAppleCord(){
     mAppleCoord[0]= (int)(Math.random() * (mXMax-1) +1)*mSpriteDim;
     mAppleCoord[1]= (int)(Math.random() * (mYMax-1) +1)*mSpriteDim;
+
   }
     
   protected boolean play() {
     eatApple();
+    if (mSnake.get(0).getXLoc() >= mXMax+1 || mSnake.get(0).getYLoc() >= mYMax+1|| mSnake.get(0).getXLoc() <= -1 || mSnake.get(0).getYLoc() <= -1 )
+      return true;
     for (int seg = 0; seg < mSnake.size(); seg++) {
       for (int point = 0; point < mPivotPoints.size(); point++) {
         if (mPivotPoints.get(point).getXLoc() == mSnake.get(seg).getXLoc() && mPivotPoints.get(point).getYLoc() == mSnake.get(seg).getYLoc()) {
@@ -99,6 +103,7 @@ public class SnakeGame {
           }
         }
       }
+      crash();
       switch (mSnake.get(seg).getDegrees()) {
         case 0:
           mSnake.get(seg).setXLoc(mSnake.get(seg).getXLoc() + 1);
@@ -113,13 +118,31 @@ public class SnakeGame {
           mSnake.get(seg).setYLoc(mSnake.get(seg).getYLoc() - 1);
           break;
       }
-    }
-      if (mSnake.get(0).getXLoc() >= mXMax || mSnake.get(0).getYLoc() >= mYMax || mSnake.get(0).getXLoc() <= 0 || mSnake.get(0).getYLoc() <= 0 )
-        return true;
-      return false;
+
+
     }
 
 
+      return mGameOver;
+    }
+
+  protected void updateScores() {
+    mScore++;
+   mCountdown--;
+   if(mCountdown<= 0) {
+     mCountdown = 12;
+     mLevel++;
+     mSpriteDim-=2;
+     mXMax = mBOARD_WIDTH/mSpriteDim;
+     mYMax = mBOARD_HEIGHT/mSpriteDim;
+   }
+  }
+  protected void crash() {
+    for (int seg = 1; seg < mSnake.size(); seg++) {
+      if (mSnake.get(0).getXLoc() == mSnake.get(seg).getXLoc() && mSnake.get(0).getYLoc() == mSnake.get(seg).getYLoc())
+        mGameOver = true;
+    }
+  }
 
   protected int getSpriteDim() {
     return mSpriteDim;

@@ -47,7 +47,6 @@ public class GameActivity extends AppCompatActivity {
         mBodyBitmap = BitmapFactory.decodeResource(mImageView.getResources(), R.drawable.body);
         mTailBitmap = BitmapFactory.decodeResource(mImageView.getResources(), R.drawable.tail);
         mAppleBitmap = BitmapFactory.decodeResource(mImageView.getResources(), R.drawable.apple);
-
         //listen for touches
         mImageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -82,6 +81,9 @@ public class GameActivity extends AppCompatActivity {
         int[] appleCoord = mGame.getAppleCoord();
         int appleLeft = appleCoord[0];
         int appleTop = appleCoord[1];
+        int[] logCoord= mGame.getAppleCoord();
+        int logLeft = appleCoord[0];
+        int logTop = appleCoord[1];
         Bitmap ourBitmap = Bitmap.createBitmap(mBOARD_WIDTH, mBOARD_HEIGHT, Bitmap.Config.ARGB_8888);
         Canvas window = new Canvas(ourBitmap);
         Rect rectangle = null;
